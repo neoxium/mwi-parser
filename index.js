@@ -14,18 +14,22 @@ const db = new sqlite3.Database(dbFile, (err) => {
 });
 
 const saveReadable = (id, content) => {
-  db.run(
-    'UPDATE expression SET readable = ? WHERE id = ?',
-    [content, id],
-    err => {
-      if (err) {
-        console.log(util.format('Error : %s on processing expression #%s', err.code, id));
-      } else {
-        byteSize = Buffer.from(content).length;
-        console.log(util.format('Saved %s bytes from expression readable #%s', byteSize, id));
+  try {
+    db.run(
+      'UPDATE expression SET readable = ? WHERE id = ?',
+      [content, id],
+      err => {
+        if (err) {
+          console.log(util.format('Error : %s on processing expression #%s', err.code, id));
+        } else {
+          byteSize = Buffer.from(content).length;
+          console.log(util.format('Saved %s bytes from expression readable #%s', byteSize, id));
+        }
       }
-    }
-  );
+    );
+  } catch(err) {
+    console.log(util.format('Error : undefined content for expression #%s', id));
+  }
 };
 
 db.serialize(() => {
